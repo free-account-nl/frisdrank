@@ -1,234 +1,188 @@
 <!DOCTYPE html>
 <html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voorraadbeheer (Admin)</title>
-    <style>
-        :root {
-            --portaal-blue: #5BC5F2;
-            --dark-blue: #11275E;
-            --orange: #E9530E;
-            --white: #FFFFFF;
-        }
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Voorraadbeheer (Admin)</title>
+		<style>
+			:root {
+				--portaal-blue: #5BC5F2;
+				--dark-blue: #11275E;
+				--orange: #E9530E;
+				--white: #FFFFFF;
+			}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
 
-        body {
-            font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
-            background-color: var(--portaal-blue);
-            color: var(--white);
-            padding: 60px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            -webkit-font-smoothing: antialiased;
-        }
+			body {
+				font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
+				background-color: var(--portaal-blue);
+				color: var(--white);
+				padding: 60px 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				-webkit-font-smoothing: antialiased;
+			}
 
-        .admin-box {
-            width: 100%;
-            max-width: 650px;
-        }
+			.admin-box {
+				width: 100%;
+				max-width: 650px;
+			}
 
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 300;
-            margin-bottom: 30px;
-            line-height: 1.1;
-        }
+			h1 {
+				font-size: 2.8rem;
+				font-weight: 300;
+				margin-bottom: 30px;
+				line-height: 1.1;
+			}
 
-        /* Wit centraal paneel voor de beheerregels */
-        .beheer-container {
-            background-color: var(--white);
-            color: var(--dark-blue);
-            padding: 10px 30px;
-            border-radius: 4px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-        }
+			/* Wit centraal paneel voor de beheerregels */
+			.beheer-container {
+				background-color: var(--white);
+				color: var(--dark-blue);
+				padding: 10px 30px;
+				border-radius: 4px;
+				box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+				margin-bottom: 40px;
+			}
 
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #e1e8ed;
-        }
+			.row {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 20px 0;
+				border-bottom: 1px solid #e1e8ed;
+			}
 
-        .row:last-child {
-            border-bottom: none;
-        }
+			.row:last-child {
+				border-bottom: none;
+			}
 
-        .product-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--dark-blue);
-        }
+			.product-name {
+				font-size: 1.2rem;
+				font-weight: bold;
+				color: var(--dark-blue);
+			}
 
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+			.controls {
+				display: flex;
+				align-items: center;
+				gap: 15px;
+			}
 
-        /* Ronde interactieve knoppen in de donkerblauwe kleur */
-        .btn-calc {
-            background-color: var(--dark-blue);
-            color: var(--white);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.4rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.15s;
-        }
+			/* Ronde interactieve knoppen in de donkerblauwe kleur */
+			.btn-calc {
+				background-color: var(--dark-blue);
+				color: var(--white);
+				border: none;
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				font-size: 1.4rem;
+				font-weight: bold;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: opacity 0.15s;
+			}
 
-        .btn-calc:hover {
-            opacity: 0.85;
-        }
+			.btn-calc:hover {
+				opacity: 0.85;
+			}
 
-        .stock-num {
-            font-size: 1.4rem;
-            font-weight: bold;
-            min-width: 40px;
-            text-align: center;
-        }
+			.stock-num {
+				font-size: 1.4rem;
+				font-weight: bold;
+				min-width: 40px;
+				text-align: center;
+			}
 
-        /* Strakke witte opslaanknop */
-        .nav-btn {
-            color: var(--white);
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: 300;
-            border: 1px solid var(--white);
-            padding: 12px 28px;
-            display: inline-block;
-            transition: background-color 0.2s, color 0.2s;
-        }
+			/* Strakke witte opslaanknop */
+			.nav-btn {
+				color: var(--white);
+				text-decoration: none;
+				font-size: 1.1rem;
+				font-weight: 300;
+				border: 1px solid var(--white);
+				padding: 12px 28px;
+				display: inline-block;
+				transition: background-color 0.2s, color 0.2s;
+			}
 
-        .nav-btn:hover {
-            background-color: var(--white);
-            color: var(--portaal-blue);
-        }
-    </style>
-</head>
-<body>
+			.nav-btn:hover {
+				background-color: var(--white);
+				color: var(--portaal-blue);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="admin-box">
+			<h1>Voorraadbeheer</h1>
+			<div class="beheer-container" id="beheer-lijst"></div>
+			<a href="index.html" class="nav-btn">← Sluiten en opslaan</a>
+		</div>
+		<script>
+			const BIN_ID = "6a25b47bda38895dfe95ebb6";
+			const MASTER_KEY = "$2a$10$eqYsufkzs8q6iPB5R1Jtf.ux0kkigXJRMNuq/kY/SH.Q/ZONJsAde";
+			const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+			let products = {};
+			let saveTimeout;
+			async function haalVoorraadOp() {
+				const response = await fetch(BASE_URL + "/latest", {
+					headers: {
+						"X-Master-Key": MASTER_KEY
+					}
+				});
+				const data = await response.json();
+				products = data.record;
+				toonBeheer();
+			}
+			async function slaVoorraadOp() {
+				await fetch(BASE_URL, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Master-Key": MASTER_KEY
+					},
+					body: JSON.stringify(products)
+				});
+			}
 
-    <div class="admin-box">
-        <h1>Voorraadbeheer</h1>
+			function toonBeheer() {
+				const lijst = document.getElementById("beheer-lijst");
+				lijst.innerHTML = "";
+				Object.keys(products).forEach(name => {
+					lijst.innerHTML += `
 
-        <div class="beheer-container" id="beheer-lijst"></div>
-
-        <a href="index.html" class="nav-btn">← Sluiten en opslaan</a>
-    </div>
-
-    <script>
-
-const BIN_ID = "6a25b47bda38895dfe95ebb6";
-const MASTER_KEY = "$2a$10$eqYsufkzs8q6iPB5R1Jtf.ux0kkigXJRMNuq/kY/SH.Q/ZONJsAde";
-
-const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
-let products = {};
-let saveTimeout;
-
-
-async function haalVoorraadOp() {
-
-    const response = await fetch(BASE_URL + "/latest", {
-        headers: {
-            "X-Master-Key": MASTER_KEY
-        }
-    });
-
-    const data = await response.json();
-
-    products = data.record;
-
-    toonBeheer();
-
-}
-
-
-async function slaVoorraadOp() {
-
-    await fetch(BASE_URL, {
-
-        method: "PUT",
-
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": MASTER_KEY
-        },
-
-        body: JSON.stringify(products)
-
-    });
-
-}
-
-
-function toonBeheer() {
-
-    const lijst = document.getElementById("beheer-lijst");
-
-    lijst.innerHTML = "";
-
-    Object.keys(products).forEach(name => {
-
-        lijst.innerHTML += `
-
-        <div class="row">
-
-            <span class="product-name">${name}</span>
-
-            <div class="controls">
-
-                <button class="btn-calc" onclick="wijzig('${name}', -1)">-</button>
-
-                <span class="stock-num">${products[name].stock}</span>
-
-                <button class="btn-calc" onclick="wijzig('${name}', 1)">+</button>
-
-            </div>
-
-        </div>
+        
+					<div class="row">
+						<span class="product-name">${name}</span>
+						<div class="controls">
+							<button class="btn-calc" onclick="wijzig('${name}', -1)">-</button>
+							<span class="stock-num">${products[name].stock}</span>
+							<button class="btn-calc" onclick="wijzig('${name}', 1)">+</button>
+						</div>
+					</div>
 
         `;
+				});
+			}
 
-    });
-
-}
-
-
-function wijzig(name, getal) {
-
-    const nieuw = products[name].stock + getal;
-
-    if (nieuw < 0) return;
-
-    products[name].stock = nieuw;
-
-    toonBeheer();
-
-    clearTimeout(saveTimeout);
-
-    saveTimeout = setTimeout(slaVoorraadOp, 500);
-
-}
-
-
-window.onload = haalVoorraadOp;
-
-</script>
-</body>
+			function wijzig(name, getal) {
+				const nieuw = products[name].stock + getal;
+				if (nieuw < 0) return;
+				products[name].stock = nieuw;
+				toonBeheer();
+				clearTimeout(saveTimeout);
+				saveTimeout = setTimeout(slaVoorraadOp, 500);
+			}
+			window.onload = haalVoorraadOp;
+		</script>
+	</body>
 </html>
