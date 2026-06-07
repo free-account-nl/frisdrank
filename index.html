@@ -1,213 +1,175 @@
 <!DOCTYPE html>
 <html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisdrank Actuele Voorraad</title>
-    <style>
-        :root {
-            --portaal-blue: #5BC5F2;
-            --dark-blue: #11275E;
-            --orange: #E9530E;
-            --white: #FFFFFF;
-        }
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Frisdrank</title>
+		<style>
+			:root {
+				--portaal-blue: #5BC5F2;
+				--dark-blue: #11275E;
+				--orange: #E9530E;
+				--white: #FFFFFF;
+			}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
 
-        body {
-            font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
-            background-color: var(--portaal-blue);
-            color: var(--white);
-            padding: 60px 20px;
-            -webkit-font-smoothing: antialiased;
-        }
+			body {
+				font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
+				background-color: var(--portaal-blue);
+				color: var(--white);
+				padding: 60px 20px;
+				-webkit-font-smoothing: antialiased;
+			}
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+			.container {
+				max-width: 1400px;
+				margin: 0 auto;
+			}
 
-        header {
-            margin-bottom: 50px;
-        }
+			header {
+				margin-bottom: 50px;
+			}
 
-        h1 {
-            font-size: 3rem;
-            font-weight: 300;
-            line-height: 1.1;
-            margin-bottom: 10px;
-        }
+			h1 {
+				font-size: 3rem;
+				font-weight: 300;
+				line-height: 1.1;
+				margin-bottom: 10px;
+			}
 
-        .subtitle {
-            font-size: 1.5rem;
-            font-weight: 300;
-            opacity: 0.9;
-        }
+			.subtitle {
+				font-size: 1.5rem;
+				font-weight: 300;
+				opacity: 0.9;
+			}
 
-        /* Alle 6 de producten strak op 1 rij */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
-            margin-top: 40px;
-        }
+			/* Alle 6 de producten strak op 1 rij */
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(6, 1fr);
+				gap: 20px;
+				margin-top: 40px;
+			}
 
-        /* Witte kaarten met een subtiele blauwe bovenrand uit de vorige stijl */
-        .card {
-            background-color: var(--white);
-            color: var(--dark-blue);
-            border-top: 5px solid var(--dark-blue);
-            border-radius: 4px;
-            padding: 25px 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 340px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s;
-        }
+			/* Witte kaarten met een subtiele blauwe bovenrand uit de vorige stijl */
+			.card {
+				background-color: var(--white);
+				color: var(--dark-blue);
+				border-top: 5px solid var(--dark-blue);
+				border-radius: 4px;
+				padding: 25px 20px;
+				text-align: center;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				min-height: 340px;
+				box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+				transition: transform 0.2s;
+			}
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+			.card:hover {
+				transform: translateY(-5px);
+			}
 
-        .card img {
-            max-height: 130px;
-            object-fit: contain;
-            margin-bottom: 20px;
-            width: auto;
-            align-self: center;
-        }
+			.card img {
+				max-height: 130px;
+				object-fit: contain;
+				margin-bottom: 20px;
+				width: auto;
+				align-self: center;
+			}
 
-        .card h2 {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--dark-blue);
-            margin-bottom: 15px;
-            line-height: 1.3;
-        }
+			.card h2 {
+				font-size: 1.2rem;
+				font-weight: bold;
+				color: var(--dark-blue);
+				margin-bottom: 15px;
+				line-height: 1.3;
+			}
 
-        /* Voorraadindicator in een strak kader */
-        .stock {
-            font-size: 1.1rem;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 4px;
-            background-color: #f7f9fa;
-            border: 1px solid #e1e8ed;
-            display: inline-block;
-            width: 100%;
-        }
+			/* Voorraadindicator in een strak kader */
+			.stock {
+				font-size: 1.1rem;
+				font-weight: bold;
+				padding: 8px 12px;
+				border-radius: 4px;
+				background-color: #f7f9fa;
+				border: 1px solid #e1e8ed;
+				display: inline-block;
+				width: 100%;
+			}
 
-        .uitverkocht {
-            color: var(--orange);
-            border-color: var(--orange);
-            font-weight: bold;
-        }
+			.uitverkocht {
+				color: var(--orange);
+				border-color: var(--orange);
+				font-weight: bold;
+			}
 
-        /* Responsive back-up voor kleine schermen (mobiel) */
-        @media (max-width: 950px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            h1 {
-                font-size: 2.2rem;
-            }
-        }
-    </style>
-</head>
-<body>
+			/* Responsive back-up voor kleine schermen (mobiel) */
+			@media (max-width: 950px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
 
-    <div class="container">
-        <header>
-            <h1>Actueel frisdrank voorraad</h1>
-        </header>
-        
-        <div class="grid" id="menu-grid"></div>
-    </div>
-
-    <script>
-
-const BIN_ID = "6a25b47bda38895dfe95ebb6";
-const ACCESS_KEY = "$2a$10$XTlxaz0BQM2Dv6CRY3bVeeCno9MXr8J88y9n3ntngsuWLs0HlBWcC";
-
-const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
-
-async function haalVoorraadOp() {
-
-    try {
-
-        const response = await fetch(BASE_URL + "/latest", {
-            headers: {
-                "X-Access-Key": ACCESS_KEY
-            }
-        });
-
-        const data = await response.json();
-
-        return data.record;
-
-    } catch (err) {
-
-        console.error(err);
-
-        return {};
-
-    }
-
-}
-
-
-async function toonMenu() {
-
-    const products = await haalVoorraadOp();
-
-    const grid = document.getElementById("menu-grid");
-
-    grid.innerHTML = "";
-
-    Object.keys(products).forEach(name => {
-
-        const p = products[name];
-
-        const out = p.stock <= 0;
-
-        grid.innerHTML += `
-
-        <div class="card">
-
-            <img src="${p.img}">
-
-            <div>
-
-                <h2>${name}</h2>
-
-                ${
-                    out
-                    ? `<div class="stock uitverkocht">Geen voorraad</div>`
-                    : `<div class="stock">Voorraad: ${p.stock}</div>`
-                }
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-
-window.onload = toonMenu;
-
-
-</script>
-</body>
+				h1 {
+					font-size: 2.2rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>Actuele frisdrank voorraad</h1>
+			</header>
+			<div class="grid" id="menu-grid"></div>
+		</div>
+		<script>
+			const BIN_ID = "6a25b47bda38895dfe95ebb6";
+			const ACCESS_KEY = "$2a$10$XTlxaz0BQM2Dv6CRY3bVeeCno9MXr8J88y9n3ntngsuWLs0HlBWcC";
+			const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+			async function haalVoorraadOp() {
+				try {
+					const response = await fetch(BASE_URL + "/latest", {
+						headers: {
+							"X-Access-Key": ACCESS_KEY
+						}
+					});
+					const data = await response.json();
+					return data.record;
+				} catch (err) {
+					console.error(err);
+					return {};
+				}
+			}
+			async function toonMenu() {
+				const products = await haalVoorraadOp();
+				const grid = document.getElementById("menu-grid");
+				grid.innerHTML = "";
+				Object.keys(products).forEach(name => {
+					const p = products[name];
+					const out = p.stock <= 0;
+					grid.innerHTML += `
+					<div class="card">
+						<img src="${p.img}">
+							<div>
+								<h2>${name}</h2>
+                            ${
+                                out
+                                ? `	<div class="stock uitverkocht">Geen voorraad</div>`
+                                : `	<div class="stock">Voorraad: ${p.stock}</div>`
+                            }
+							</div>
+						</div>
+                    `;
+				});
+			}
+			window.onload = toonMenu;
+		</script>
+	</body>
 </html>
