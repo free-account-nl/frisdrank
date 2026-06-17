@@ -102,7 +102,23 @@
 				min-width: 40px;
 				text-align: center;
 			}
-
+			
+			.price-control {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				margin-left: 20px;
+			}
+			
+			.price-input {
+				width: 80px;
+				padding: 6px 8px;
+				border: 1px solid #d0d7de;
+				border-radius: 4px;
+				text-align: center;
+				font-size: 1rem;
+			}
+			
 			/* Strakke witte opslaanknop */
 			.nav-btn {
 				color: var(--white);
@@ -157,20 +173,40 @@
 			function toonBeheer() {
 				const lijst = document.getElementById("beheer-lijst");
 				lijst.innerHTML = "";
+			
 				Object.keys(products).forEach(name => {
+			
+					const prijs = products[name].price || 0;
+			
 					lijst.innerHTML += `
-
-        
-					<div class="row">
-						<span class="product-name">${name}</span>
-						<div class="controls">
-							<button class="btn-calc" onclick="wijzig('${name}', -1)">-</button>
-							<span class="stock-num">${products[name].stock}</span>
-							<button class="btn-calc" onclick="wijzig('${name}', 1)">+</button>
+						<div class="row">
+			
+							<span class="product-name">${name}</span>
+			
+							<div class="controls">
+			
+								<button class="btn-calc" onclick="wijzig('${name}', -1)">-</button>
+			
+								<span class="stock-num">${products[name].stock}</span>
+			
+								<button class="btn-calc" onclick="wijzig('${name}', 1)">+</button>
+			
+								<div class="price-control">
+									<span>€</span>
+									<input
+										type="number"
+										step="0.01"
+										min="0"
+										class="price-input"
+										value="${prijs}"
+										onchange="wijzigPrijs('${name}', this.value)"
+									>
+								</div>
+			
+							</div>
+			
 						</div>
-					</div>
-
-        `;
+					`;
 				});
 			}
 
@@ -181,6 +217,12 @@
 				toonBeheer();
 				clearTimeout(saveTimeout);
 				saveTimeout = setTimeout(slaVoorraadOp, 500);
+			}
+
+			function wijzigPrijs(name, prijs) {
+			products[name].price = parseFloat(prijs) || 0;
+			clearTimeout(saveTimeout);
+			saveTimeout = setTimeout(slaVoorraadOp, 500);
 			}
 			window.onload = haalVoorraadOp;
 		</script>
