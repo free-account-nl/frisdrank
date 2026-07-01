@@ -1,230 +1,271 @@
 <!DOCTYPE html>
 <html lang="nl">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Voorraadbeheer (Admin)</title>
-		<style>
-			:root {
-				--portaal-blue: #5BC5F2;
-				--dark-blue: #11275E;
-				--orange: #E9530E;
-				--white: #FFFFFF;
-			}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Voorraadbeheer (Admin)</title>
 
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
+	<style>
+		:root {
+			--portaal-blue: #5BC5F2;
+			--dark-blue: #11275E;
+			--orange: #E9530E;
+			--white: #FFFFFF;
+		}
 
-			body {
-				font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
-				background-color: var(--portaal-blue);
-				color: var(--white);
-				padding: 60px 20px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				-webkit-font-smoothing: antialiased;
-			}
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
 
-			.admin-box {
-				width: 100%;
-				max-width: 650px;
-			}
+		body {
+			font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
+			background-color: var(--portaal-blue);
+			color: var(--white);
+			padding: 60px 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
 
-			h1 {
-				font-size: 2.8rem;
-				font-weight: 300;
-				margin-bottom: 30px;
-				line-height: 1.1;
-			}
+		.admin-box {
+			width: 100%;
+			max-width: 900px;
+		}
 
-			/* Wit centraal paneel voor de beheerregels */
-			.beheer-container {
-				background-color: var(--white);
-				color: var(--dark-blue);
-				padding: 10px 30px;
-				border-radius: 4px;
-				box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-				margin-bottom: 40px;
-			}
+		h1 {
+			font-size: 2.8rem;
+			font-weight: 300;
+			margin-bottom: 30px;
+		}
 
-			.row {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding: 20px 0;
-				border-bottom: 1px solid #e1e8ed;
-			}
+		.beheer-container {
+			background-color: var(--white);
+			color: var(--dark-blue);
+			padding: 10px 30px;
+			border-radius: 4px;
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+			margin-bottom: 40px;
+		}
 
-			.row:last-child {
-				border-bottom: none;
-			}
+		.row {
+			display: grid;
+			grid-template-columns: 1.4fr 90px 140px 2fr;
+			gap: 15px;
+			align-items: center;
+			padding: 20px 0;
+			border-bottom: 1px solid #e1e8ed;
+		}
 
-			.product-name {
-				font-size: 1.2rem;
-				font-weight: bold;
-				color: var(--dark-blue);
-			}
+		.row:last-child {
+			border-bottom: none;
+		}
 
-			.controls {
-				display: flex;
-				align-items: center;
-				gap: 15px;
-			}
+		.input-field {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			font-size: 0.95rem;
+		}
 
-			/* Ronde interactieve knoppen in de donkerblauwe kleur */
-			.btn-calc {
-				background-color: var(--dark-blue);
-				color: var(--white);
-				border: none;
-				width: 40px;
-				height: 40px;
-				border-radius: 50%;
-				font-size: 1.4rem;
-				font-weight: bold;
-				cursor: pointer;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				transition: opacity 0.15s;
-			}
+		.stock-controls {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			justify-content: center;
+		}
 
-			.btn-calc:hover {
-				opacity: 0.85;
-			}
+		.btn-calc {
+			background-color: var(--dark-blue);
+			color: var(--white);
+			border: none;
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			font-size: 1.3rem;
+			font-weight: bold;
+			cursor: pointer;
+		}
 
-			.stock-num {
-				font-size: 1.4rem;
-				font-weight: bold;
-				min-width: 40px;
-				text-align: center;
-			}
-			
-			.price-control {
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				margin-left: 20px;
-			}
-			
-			.price-input {
-				width: 80px;
-				padding: 6px 8px;
-				border: 1px solid #d0d7de;
-				border-radius: 4px;
-				text-align: center;
-				font-size: 1rem;
-			}
-			
-			/* Strakke witte opslaanknop */
-			.nav-btn {
-				color: var(--white);
-				text-decoration: none;
-				font-size: 1.1rem;
-				font-weight: 300;
-				border: 1px solid var(--white);
-				padding: 12px 28px;
-				display: inline-block;
-				transition: background-color 0.2s, color 0.2s;
-			}
+		.stock-num {
+			font-size: 1.2rem;
+			font-weight: bold;
+			min-width: 30px;
+			text-align: center;
+		}
 
-			.nav-btn:hover {
-				background-color: var(--white);
-				color: var(--portaal-blue);
+		.nav-btn {
+			color: var(--white);
+			text-decoration: none;
+			font-size: 1.1rem;
+			font-weight: 300;
+			border: 1px solid var(--white);
+			padding: 12px 28px;
+			display: inline-block;
+		}
+
+		.nav-btn:hover {
+			background-color: var(--white);
+			color: var(--portaal-blue);
+		}
+
+		.labels {
+			display: grid;
+			grid-template-columns: 1.4fr 90px 140px 2fr;
+			gap: 15px;
+			font-weight: bold;
+			padding: 15px 0;
+			border-bottom: 2px solid #e1e8ed;
+		}
+
+		@media (max-width: 800px) {
+			.row,
+			.labels {
+				grid-template-columns: 1fr;
 			}
-		</style>
-	</head>
-	<body>
-		<div class="admin-box">
-			<h1>Voorraadbeheer</h1>
-			<div class="beheer-container" id="beheer-lijst"></div>
-			<a href="index.html" class="nav-btn">← Sluiten en opslaan</a>
-		</div>
-		<script>
+		}
+	</style>
+</head>
+<body>
+	<div class="admin-box">
+		<h1>Voorraadbeheer</h1>
+		<div class="beheer-container" id="beheer-lijst"></div>
+		<a href="index.html" class="nav-btn">← Sluiten en opslaan</a>
+	</div>
+	<script>
 			const BIN_ID = "6a25b47bda38895dfe95ebb6";
 			const MASTER_KEY = "$2a$10$eqYsufkzs8q6iPB5R1Jtf.ux0kkigXJRMNuq/kY/SH.Q/ZONJsAde";
 			const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-			let products = {};
-			let saveTimeout;
-			async function haalVoorraadOp() {
-				const response = await fetch(BASE_URL + "/latest", {
-					headers: {
-						"X-Master-Key": MASTER_KEY
-					}
-				});
-				const data = await response.json();
-				products = data.record;
-				toonBeheer();
-			}
-			async function slaVoorraadOp() {
-				await fetch(BASE_URL, {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-						"X-Master-Key": MASTER_KEY
-					},
-					body: JSON.stringify(products)
-				});
-			}
+		let products = {};
+		let saveTimeout;
 
-			function toonBeheer() {
-				const lijst = document.getElementById("beheer-lijst");
-				lijst.innerHTML = "";
-			
-				Object.keys(products).forEach(name => {
-			
-					const prijs = products[name].price || 0;
-			
-					lijst.innerHTML += `
-						<div class="row">
-			
-							<span class="product-name">${name}</span>
-			
-							<div class="controls">
-			
-								<button class="btn-calc" onclick="wijzig('${name}', -1)">-</button>
-			
-								<span class="stock-num">${products[name].stock}</span>
-			
-								<button class="btn-calc" onclick="wijzig('${name}', 1)">+</button>
-			
-								<div class="price-control">
-									<span>€</span>
-									<input
-										type="number"
-										step="0.01"
-										min="0"
-										class="price-input"
-										value="${prijs}"
-										onchange="wijzigPrijs('${name}', this.value)"
-									>
-								</div>
-			
-							</div>
-			
-						</div>
-					`;
-				});
-			}
+		async function haalVoorraadOp() {
+			const response = await fetch(BASE_URL + "/latest", {
+				headers: {
+					"X-Master-Key": MASTER_KEY
+				}
+			});
 
-			function wijzig(name, getal) {
-				const nieuw = products[name].stock + getal;
-				if (nieuw < 0) return;
-				products[name].stock = nieuw;
-				toonBeheer();
-				clearTimeout(saveTimeout);
-				saveTimeout = setTimeout(slaVoorraadOp, 500);
-			}
+			const data = await response.json();
 
-			function wijzigPrijs(name, prijs) {
-			products[name].price = parseFloat(prijs) || 0;
+			products = zetOudeStructuurOm(data.record);
+
+			toonBeheer();
+		}
+
+		function zetOudeStructuurOm(data) {
+			const nieuw = {};
+
+			Object.keys(data).forEach((key, index) => {
+				const product = data[key];
+
+				nieuw[index + 1] = {
+					name: product.name || key,
+					stock: product.stock || 0,
+					price: product.price || 0,
+					img: product.img || ""
+				};
+			});
+
+			return nieuw;
+		}
+
+		async function slaVoorraadOp() {
+			await fetch(BASE_URL, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Master-Key": MASTER_KEY
+				},
+				body: JSON.stringify(products)
+			});
+		}
+
+		function automatischOpslaan() {
 			clearTimeout(saveTimeout);
 			saveTimeout = setTimeout(slaVoorraadOp, 500);
-			}
-			window.onload = haalVoorraadOp;
-		</script>
-	</body>
+		}
+
+		function toonBeheer() {
+			const lijst = document.getElementById("beheer-lijst");
+
+			lijst.innerHTML = `
+				<div class="labels">
+					<div>Naam</div>
+					<div>Voorraad</div>
+					<div>Prijs</div>
+					<div>Afbeelding URL</div>
+				</div>
+			`;
+
+			Object.keys(products).forEach(id => {
+				const product = products[id];
+
+				lijst.innerHTML += `
+					<div class="row">
+						<input
+							class="input-field"
+							type="text"
+							value="${product.name}"
+							onchange="wijzigNaam('${id}', this.value)"
+						>
+
+						<div class="stock-controls">
+							<button class="btn-calc" onclick="wijzigVoorraad('${id}', -1)">-</button>
+							<span class="stock-num">${product.stock}</span>
+							<button class="btn-calc" onclick="wijzigVoorraad('${id}', 1)">+</button>
+						</div>
+
+						<input
+							class="input-field"
+							type="number"
+							step="0.01"
+							min="0"
+							value="${product.price}"
+							onchange="wijzigPrijs('${id}', this.value)"
+						>
+
+						<input
+							class="input-field"
+							type="text"
+							value="${product.img}"
+							onchange="wijzigAfbeelding('${id}', this.value)"
+						>
+					</div>
+				`;
+			});
+		}
+
+		function wijzigNaam(id, naam) {
+			products[id].name = naam;
+			automatischOpslaan();
+		}
+
+		function wijzigPrijs(id, prijs) {
+			products[id].price = parseFloat(prijs) || 0;
+			automatischOpslaan();
+		}
+
+		function wijzigAfbeelding(id, url) {
+			products[id].img = url;
+			automatischOpslaan();
+		}
+
+		function wijzigVoorraad(id, getal) {
+			const nieuw = products[id].stock + getal;
+
+			if (nieuw < 0) return;
+
+			products[id].stock = nieuw;
+
+			toonBeheer();
+
+			automatischOpslaan();
+		}
+
+		window.onload = haalVoorraadOp;
+	</script>
+</body>
 </html>
