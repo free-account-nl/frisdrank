@@ -126,16 +126,13 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <header>
             <h1>Actuele frisdrank voorraad</h1>
         </header>
-
         <div class="grid" id="menu-grid"></div>
     </div>
-
     <script>
         const BIN_ID = "6a25b47bda38895dfe95ebb6";
 		const ACCESS_KEY = "$2a$10$XTlxaz0BQM2Dv6CRY3bVeeCno9MXr8J88y9n3ntngsuWLs0HlBWcC";
@@ -179,7 +176,7 @@
 						<div>
 						    <h2>${p.name}</h2>
 						    <div class="content">
-						        ${p.content}
+						        ${p.content || ""}
 						    </div>
 						    <div class="price">
 						        ${prijs}
