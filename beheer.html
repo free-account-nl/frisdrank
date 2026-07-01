@@ -73,20 +73,36 @@
 		.stock-controls {
 			display: flex;
 			align-items: center;
-			gap: 10px;
 			justify-content: center;
+			gap: 10px;
+			white-space: nowrap;
 		}
 
 		.btn-calc {
 			background-color: var(--dark-blue);
 			color: var(--white);
 			border: none;
+		
 			width: 36px;
+			min-width: 36px;
+			max-width: 36px;
+		
 			height: 36px;
+			min-height: 36px;
+			max-height: 36px;
+		
 			border-radius: 50%;
+		
 			font-size: 1.3rem;
 			font-weight: bold;
 			cursor: pointer;
+		
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		
+			padding: 0;
+			flex-shrink: 0;
 		}
 
 		.stock-num {
