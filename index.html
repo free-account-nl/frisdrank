@@ -132,62 +132,62 @@
         const BIN_ID = "6a25b47bda38895dfe95ebb6";
 		const ACCESS_KEY = "$2a$10$XTlxaz0BQM2Dv6CRY3bVeeCno9MXr8J88y9n3ntngsuWLs0HlBWcC";
         const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
-        async function haalVoorraadOp() {
-            try {
-                const response = await fetch(BASE_URL + "/latest", {
-                    headers: {
-                        "X-Access-Key": ACCESS_KEY
-                    }
-                });
-
-                const data = await response.json();
-                return data.record;
-
-            } catch (err) {
-                console.error(err);
-                return {};
-            }
-        }
-
-        async function toonMenu() {
-            const products = await haalVoorraadOp();
-            const grid = document.getElementById("menu-grid");
-
-            grid.innerHTML = "";
-
-            Object.keys(products).forEach(name => {
-                const p = products[name];
-                const out = p.stock <= 0;
-
-                const prijs = new Intl.NumberFormat('nl-NL', {
-                    style: 'currency',
-                    currency: 'EUR'
-                }).format(p.price || 0);
-
-                grid.innerHTML += `
-                    <div class="card">
-                        <img src="${p.img}" alt="${name}">
-
-                        <div>
-                            <h2>${name}</h2>
-
-                            <div class="price">
-                                ${prijs}
-                            </div>
-
-                            ${
-                                out
-                                ? `<div class="stock uitverkocht">Geen voorraad</div>`
-                                : `<div class="stock">Voorraad: ${p.stock}</div>`
-                            }
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        window.onload = toonMenu;
-    </script>
+		
+		async function haalVoorraadOp() {
+			try {
+				const response = await fetch(BASE_URL + "/latest", {
+					headers: {
+						"X-Access-Key": ACCESS_KEY
+					}
+				});
+	
+				const data = await response.json();
+				return data.record;
+	
+			} catch (err) {
+				console.error(err);
+				return {};
+			}
+		}
+	
+		async function toonMenu() {
+			const products = await haalVoorraadOp();
+			const grid = document.getElementById("menu-grid");
+	
+			grid.innerHTML = "";
+	
+			Object.keys(products).forEach(id => {
+				const p = products[id];
+				const out = p.stock <= 0;
+	
+				const prijs = new Intl.NumberFormat('nl-NL', {
+					style: 'currency',
+					currency: 'EUR'
+				}).format(p.price || 0);
+	
+				grid.innerHTML += `
+					<div class="card">
+						<img src="${p.img}" alt="${p.name}">
+	
+						<div>
+							<h2>${p.name}</h2>
+	
+							<div class="price">
+								${prijs}
+							</div>
+	
+							${
+								out
+								? `<div class="stock uitverkocht">Geen voorraad</div>`
+								: `<div class="stock">Voorraad: ${p.stock}</div>`
+							}
+						</div>
+					</div>
+				`;
+			});
+		}
+	
+		window.onload = toonMenu;
+	</script>
 </body>
 </html>
