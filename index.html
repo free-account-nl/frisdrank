@@ -84,6 +84,14 @@
             line-height: 1.3;
         }
 
+		.content {
+		    font-size: 0.9rem;
+		    color: #666;
+		    margin-top: -8px;
+		    margin-bottom: 15px;
+		    font-weight: normal;
+		}
+
         .price {
             font-size: 1.5rem;
             font-weight: bold;
@@ -168,14 +176,14 @@
 				grid.innerHTML += `
 					<div class="card">
 						<img src="${p.img}" alt="${p.name}">
-	
 						<div>
-							<h2>${p.name}</h2>
-	
-							<div class="price">
-								${prijs}
-							</div>
-	
+						    <h2>${p.name}</h2>
+						    <div class="content">
+						        ${p.content || ""}
+						    </div>
+						    <div class="price">
+						        ${prijs}
+						    </div>
 							${
 								out
 								? `<div class="stock uitverkocht">Geen voorraad</div>`
@@ -186,7 +194,6 @@
 				`;
 			});
 		}
-	
 		window.onload = toonMenu;
 	</script>
 </body>
