@@ -240,7 +240,16 @@
 
             Object.keys(CATEGORY_LABELS).forEach(category => {
                 const items = products[category] || {};
-                const cards = Object.keys(items).map(id => productCard(items[id])).join("");
+                const cards = Object.keys(items)
+                    .sort((a, b) =>
+                        (items[a].name || "").localeCompare(
+                            items[b].name || "",
+                            "nl",
+                            { sensitivity: "base" }
+                        )
+                    )
+                    .map(id => productCard(items[id]))
+                    .join("");
 
                 menu.innerHTML += `
                     <section class="category-section">
