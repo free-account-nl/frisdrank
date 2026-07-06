@@ -30,7 +30,7 @@
 
 		.admin-box {
 			width: 100%;
-			max-width: 760px;
+			max-width: 860px;
 		}
 
 		h1 {
@@ -39,18 +39,34 @@
 			margin-bottom: 30px;
 		}
 
+		.category-block {
+			margin-bottom: 35px;
+		}
+
+		.category-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 12px;
+		}
+
+		.category-header h2 {
+			font-size: 1.7rem;
+			font-weight: 300;
+		}
+
 		.beheer-container {
 			background-color: var(--white);
 			color: var(--dark-blue);
 			padding: 10px 30px;
 			border-radius: 4px;
 			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-			margin-bottom: 40px;
 		}
 
 		.row {
 			display: grid;
-			grid-template-columns: 1fr 170px 110px;
+			grid-template-columns: 1fr 170px 110px 44px;
 			gap: 25px;
 			align-items: center;
 			padding: 25px 0;
@@ -103,7 +119,8 @@
 			width: 150px;
 		}
 
-		.btn-calc {
+		.btn-calc,
+		.btn-delete {
 			background-color: var(--dark-blue);
 			color: var(--white);
 			border: none;
@@ -119,6 +136,22 @@
 			align-items: center;
 			justify-content: center;
 			padding: 0;
+		}
+
+		.btn-delete {
+			background-color: var(--orange);
+			font-size: 1rem;
+		}
+
+		.btn-add {
+			background-color: var(--white);
+			color: var(--dark-blue);
+			border: 1px solid var(--white);
+			border-radius: 4px;
+			padding: 10px 16px;
+			font-family: inherit;
+			font-weight: bold;
+			cursor: pointer;
 		}
 
 		.stock-num {
@@ -148,6 +181,7 @@
 			border: 1px solid var(--white);
 			padding: 12px 28px;
 			display: inline-block;
+			margin-top: 5px;
 		}
 
 		.nav-btn:hover {
@@ -155,7 +189,12 @@
 			color: var(--portaal-blue);
 		}
 
-		@media (max-width: 700px) {
+		.empty-message {
+			padding: 22px 0;
+			color: #666;
+		}
+
+		@media (max-width: 760px) {
 			.row {
 				grid-template-columns: 1fr;
 			}
@@ -169,7 +208,7 @@
 <body>
 	<div class="admin-box">
 		<h1>Voorraadbeheer</h1>
-		<div class="beheer-container" id="beheer-lijst"></div>
+		<div id="beheer-lijst"></div>
 		<a href="index.html" class="nav-btn">← Sluiten en opslaan</a>
 	</div>
 	<script>
@@ -177,8 +216,41 @@
 		const MASTER_KEY = "$2a$10$eqYsufkzs8q6iPB5R1Jtf.ux0kkigXJRMNuq/kY/SH.Q/ZONJsAde";
 		const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-		let products = {};
+		const CATEGORY_LABELS = {
+			drinks: "Frisdrank",
+			snacks: "Snacks"
+		};
+
+		let products = { drinks: {}, snacks: {} };
 		let saveTimeout;
+
+		function normaliseerData(record) {
+			if (record.drinks || record.snacks) {
+				return {
+					drinks: record.drinks || {},
+					snacks: record.snacks || {}
+				};
+			}
+
+			// Backwards compatible: oude JSON zonder categorieën wordt automatisch als frisdrank ingeladen.
+			return {
+				drinks: record || {},
+				snacks: {}
+			};
+		}
+
+		function escapeHtml(value) {
+			return String(value ?? "")
+				.replaceAll("&", "&amp;")
+				.replaceAll("<", "&lt;")
+				.replaceAll(">", "&gt;")
+				.replaceAll('"', "&quot;")
+				.replaceAll("'", "&#039;");
+		}
+
+		function escapeAttr(value) {
+			return escapeHtml(value);
+		}
 
 		async function haalVoorraadOp() {
 			const response = await fetch(BASE_URL + "/latest", {
@@ -188,7 +260,7 @@
 			});
 
 			const data = await response.json();
-			products = data.record;
+			products = normaliseerData(data.record || {});
 
 			toonBeheer();
 		}
@@ -213,85 +285,101 @@
 			const lijst = document.getElementById("beheer-lijst");
 			lijst.innerHTML = "";
 
-			Object.keys(products).forEach(id => {
-				const product = products[id];
+			Object.keys(CATEGORY_LABELS).forEach(category => {
+				const items = products[category] || {};
+				let rows = "";
+
+				Object.keys(items).forEach(id => {
+					const product = items[id];
+
+					rows += `
+						<div class="row">
+							<div class="product-fields">
+								<input class="input-name" type="text" value="${escapeAttr(product.name || "")}" placeholder="Naam" onchange="wijzigNaam('${category}', '${id}', this.value)">
+								<input class="input-content" type="text" value="${escapeAttr(product.content || "")}" placeholder="Inhoud / omschrijving" onchange="wijzigContent('${category}', '${id}', this.value)">
+								<input class="input-url" type="text" value="${escapeAttr(product.img || "")}" placeholder="Afbeelding URL" onchange="wijzigAfbeelding('${category}', '${id}', this.value)">
+							</div>
+
+							<div class="stock-controls">
+								<button class="btn-calc" onclick="wijzigVoorraad('${category}', '${id}', -1)">-</button>
+								<span class="stock-num">${Number(product.stock || 0)}</span>
+								<button class="btn-calc" onclick="wijzigVoorraad('${category}', '${id}', 1)">+</button>
+							</div>
+
+							<div class="price-control">
+								<span>€</span>
+								<input class="input-price" type="number" step="0.01" min="0" value="${Number(product.price || 0)}" onchange="wijzigPrijs('${category}', '${id}', this.value)">
+							</div>
+
+							<button class="btn-delete" title="Verwijderen" onclick="verwijderProduct('${category}', '${id}')">×</button>
+						</div>
+					`;
+				});
 
 				lijst.innerHTML += `
-					<div class="row">
-						<div class="product-fields">
-							<input
-								class="input-name"
-								type="text"
-								value="${product.name || ""}"
-								placeholder="Naam"
-								onchange="wijzigNaam('${id}', this.value)"
-							>
-
-							<input
-								class="input-content"
-								type="text"
-								value="${product.content || ""}"
-								placeholder="Inhoud"
-								onchange="wijzigContent('${id}', this.value)"
-							>
-
-							<input
-								class="input-url"
-								type="text"
-								value="${product.img || ""}"
-								placeholder="Afbeelding URL"
-								onchange="wijzigAfbeelding('${id}', this.value)"
-							>
+					<section class="category-block">
+						<div class="category-header">
+							<h2>${CATEGORY_LABELS[category]}</h2>
+							<button class="btn-add" onclick="voegProductToe('${category}')">+ Product toevoegen</button>
 						</div>
-
-						<div class="stock-controls">
-							<button class="btn-calc" onclick="wijzigVoorraad('${id}', -1)">-</button>
-							<span class="stock-num">${product.stock}</span>
-							<button class="btn-calc" onclick="wijzigVoorraad('${id}', 1)">+</button>
+						<div class="beheer-container">
+							${rows || `<div class="empty-message">Nog geen producten in deze categorie.</div>`}
 						</div>
-
-						<div class="price-control">
-							<span>€</span>
-							<input
-								class="input-price"
-								type="number"
-								step="0.01"
-								min="0"
-								value="${product.price || 0}"
-								onchange="wijzigPrijs('${id}', this.value)"
-							>
-						</div>
-					</div>
+					</section>
 				`;
 			});
 		}
 
-		function wijzigNaam(id, naam) {
-			products[id].name = naam;
+		function wijzigNaam(category, id, naam) {
+			products[category][id].name = naam;
 			automatischOpslaan();
 		}
 
-		function wijzigContent(id, content) {
-			products[id].content = content;
+		function wijzigContent(category, id, content) {
+			products[category][id].content = content;
 			automatischOpslaan();
 		}
 
-		function wijzigAfbeelding(id, url) {
-			products[id].img = url;
+		function wijzigAfbeelding(category, id, url) {
+			products[category][id].img = url;
 			automatischOpslaan();
 		}
 
-		function wijzigPrijs(id, prijs) {
-			products[id].price = parseFloat(prijs) || 0;
+		function wijzigPrijs(category, id, prijs) {
+			products[category][id].price = parseFloat(prijs) || 0;
 			automatischOpslaan();
 		}
 
-		function wijzigVoorraad(id, getal) {
-			const nieuw = products[id].stock + getal;
+		function wijzigVoorraad(category, id, getal) {
+			const huidig = Number(products[category][id].stock || 0);
+			const nieuw = huidig + getal;
 
 			if (nieuw < 0) return;
 
-			products[id].stock = nieuw;
+			products[category][id].stock = nieuw;
+			toonBeheer();
+			automatischOpslaan();
+		}
+
+		function voegProductToe(category) {
+			const ids = Object.keys(products[category] || {}).map(Number).filter(Boolean);
+			const nieuwId = String(ids.length ? Math.max(...ids) + 1 : 1);
+
+			products[category][nieuwId] = {
+				name: "Nieuw product",
+				content: "",
+				stock: 0,
+				price: 0,
+				img: ""
+			};
+
+			toonBeheer();
+			automatischOpslaan();
+		}
+
+		function verwijderProduct(category, id) {
+			if (!confirm("Weet je zeker dat je dit product wilt verwijderen?")) return;
+			delete products[category][id];
 			toonBeheer();
 			automatischOpslaan();
 		}
