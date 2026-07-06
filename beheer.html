@@ -289,8 +289,16 @@
 				const items = products[category] || {};
 				let rows = "";
 
-				Object.keys(items).forEach(id => {
-					const product = items[id];
+				Object.keys(items)
+					.sort((a, b) =>
+						(items[a].name || "").localeCompare(
+							items[b].name || "",
+							"nl",
+							{ sensitivity: "base" }
+						)
+					)
+					.forEach(id => {
+						const product = items[id];
 
 					rows += `
 						<div class="row">
