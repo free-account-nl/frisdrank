@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frisdrank</title>
+    <title>Frisdrank & Snacks</title>
     <style>
         :root {
             --portaal-blue: #5BC5F2;
@@ -32,7 +32,7 @@
         }
 
         header {
-            margin-bottom: 50px;
+            margin-bottom: 35px;
         }
 
         h1 {
@@ -42,11 +42,20 @@
             margin-bottom: 10px;
         }
 
+        .category-section {
+            margin-top: 45px;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 20px;
-            margin-top: 40px;
         }
 
         .card {
@@ -73,6 +82,7 @@
             object-fit: contain;
             margin-bottom: 20px;
             width: auto;
+            max-width: 100%;
             align-self: center;
         }
 
@@ -84,13 +94,14 @@
             line-height: 1.3;
         }
 
-		.content {
-		    font-size: 0.9rem;
-		    color: #666;
-		    margin-top: -8px;
-		    margin-bottom: 15px;
-		    font-weight: normal;
-		}
+        .content {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: -8px;
+            margin-bottom: 15px;
+            font-weight: normal;
+            min-height: 20px;
+        }
 
         .price {
             font-size: 1.5rem;
@@ -115,7 +126,20 @@
             border-color: var(--orange);
         }
 
-        @media (max-width: 950px) {
+        .empty-message {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+            padding: 18px;
+        }
+
+        @media (max-width: 1100px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
             .grid {
                 grid-template-columns: 1fr;
             }
@@ -129,69 +153,108 @@
 <body>
     <div class="container">
         <header>
-            <h1>Actuele frisdrank voorraad</h1>
+            <h1>Actuele voorraad</h1>
         </header>
-        <div class="grid" id="menu-grid"></div>
+        <div id="menu"></div>
     </div>
     <script>
         const BIN_ID = "6a25b47bda38895dfe95ebb6";
 		const ACCESS_KEY = "$2a$10$XTlxaz0BQM2Dv6CRY3bVeeCno9MXr8J88y9n3ntngsuWLs0HlBWcC";
         const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-		
-		async function haalVoorraadOp() {
-			try {
-				const response = await fetch(BASE_URL + "/latest", {
-					headers: {
-						"X-Access-Key": ACCESS_KEY
-					}
-				});
-	
-				const data = await response.json();
-				return data.record;
-	
-			} catch (err) {
-				console.error(err);
-				return {};
-			}
-		}
-	
-		async function toonMenu() {
-			const products = await haalVoorraadOp();
-			const grid = document.getElementById("menu-grid");
-	
-			grid.innerHTML = "";
-	
-			Object.keys(products).forEach(id => {
-				const p = products[id];
-				const out = p.stock <= 0;
-	
-				const prijs = new Intl.NumberFormat('nl-NL', {
-					style: 'currency',
-					currency: 'EUR'
-				}).format(p.price || 0);
-	
-				grid.innerHTML += `
-					<div class="card">
-						<img src="${p.img}" alt="${p.name}">
-						<div>
-						    <h2>${p.name}</h2>
-						    <div class="content">
-						        ${p.content || ""}
-						    </div>
-						    <div class="price">
-						        ${prijs}
-						    </div>
-							${
-								out
-								? `<div class="stock uitverkocht">Geen voorraad</div>`
-								: `<div class="stock">Voorraad: ${p.stock}</div>`
-							}
-						</div>
-					</div>
-				`;
-			});
-		}
-		window.onload = toonMenu;
-	</script>
+
+        const CATEGORY_LABELS = {
+            drinks: "Frisdrank",
+            snacks: "Snacks"
+        };
+
+        function normaliseerData(record) {
+            if (record.drinks || record.snacks) {
+                return {
+                    drinks: record.drinks || {},
+                    snacks: record.snacks || {}
+                };
+            }
+
+            // Backwards compatible: oude JSON zonder categorieën wordt automatisch als frisdrank gelezen.
+            return {
+                drinks: record || {},
+                snacks: {}
+            };
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        async function haalVoorraadOp() {
+            try {
+                const response = await fetch(BASE_URL + "/latest", {
+                    headers: {
+                        "X-Access-Key": ACCESS_KEY
+                    }
+                });
+
+                const data = await response.json();
+                return normaliseerData(data.record || {});
+
+            } catch (err) {
+                console.error(err);
+                return { drinks: {}, snacks: {} };
+            }
+        }
+
+        function productCard(p) {
+            const out = Number(p.stock || 0) <= 0;
+
+            const prijs = new Intl.NumberFormat('nl-NL', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(Number(p.price || 0));
+
+            return `
+                <div class="card">
+                    <img src="${escapeHtml(p.img)}" alt="${escapeHtml(p.name)}">
+                    <div>
+                        <h2>${escapeHtml(p.name)}</h2>
+                        <div class="content">${escapeHtml(p.content || "")}</div>
+                        <div class="price">${prijs}</div>
+                        ${
+                            out
+                            ? `<div class="stock uitverkocht">Geen voorraad</div>`
+                            : `<div class="stock">Voorraad: ${Number(p.stock || 0)}</div>`
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        async function toonMenu() {
+            const products = await haalVoorraadOp();
+            const menu = document.getElementById("menu");
+            menu.innerHTML = "";
+
+            Object.keys(CATEGORY_LABELS).forEach(category => {
+                const items = products[category] || {};
+                const cards = Object.keys(items).map(id => productCard(items[id])).join("");
+
+                menu.innerHTML += `
+                    <section class="category-section">
+                        <h2 class="category-title">${CATEGORY_LABELS[category]}</h2>
+                        ${
+                            cards
+                            ? `<div class="grid">${cards}</div>`
+                            : `<div class="empty-message">Nog geen producten in deze categorie.</div>`
+                        }
+                    </section>
+                `;
+            });
+        }
+        window.onload = toonMenu;
+    </script>
 </body>
 </html>
